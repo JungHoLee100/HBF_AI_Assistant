@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HBF Intelligent Chat Platform</title>
+    <title>HBF Intelligent Insight Platform</title>
     
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     
@@ -37,21 +37,25 @@
             border-radius: 28px; box-shadow: 0 20px 50px rgba(0,0,0,0.08);
         }
 
-        .login-box h2 { font-size: 24px; font-weight: 800; color: var(--hbf-blue); margin-bottom: 32px; }
+        .login-box h2 { font-size: 24px; font-weight: 800; color: var(--hbf-blue); margin-bottom: 32px; letter-spacing: -0.5px; }
 
         input[type="password"] {
             width: 100%; padding: 15px; font-size: 16px;
             border: 1px solid var(--border-color); border-radius: 14px;
             margin-bottom: 16px; box-sizing: border-box; outline: none;
+            transition: all 0.2s;
         }
+        input:focus { border-color: var(--hbf-blue); box-shadow: 0 0 0 4px rgba(0,102,255,0.1); }
 
         button {
             width: 100%; padding: 15px; background: var(--hbf-blue);
             color: #fff; border: none; border-radius: 14px;
             font-size: 16px; font-weight: 700; cursor: pointer;
+            transition: transform 0.1s;
         }
+        button:active { transform: scale(0.98); }
 
-        /* 2. 메인 UI 레이아웃 (채팅방 중심) */
+        /* 2. 메인 UI 레이아웃 (검색 포털형) */
         #main-ui {
             display: none;
             grid-template-columns: 280px 1fr;
@@ -70,6 +74,8 @@
             line-height: 1.3; margin-bottom: 56px;
         }
 
+        .nav-label { font-size: 11px; font-weight: 700; color: #555; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; }
+
         .status-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -78,35 +84,70 @@
 
         .indicator {
             display: flex; align-items: center; gap: 8px;
-            font-size: 13px; font-weight: 600; color: #00D1FF; margin-bottom: 8px;
+            font-size: 13px; font-weight: 600; color: #00FFB2; margin-bottom: 8px;
         }
-        .indicator::before { content: ''; width: 8px; height: 8px; background: #00D1FF; border-radius: 50%; box-shadow: 0 0 10px #00D1FF; }
+        .indicator::before { content: ''; width: 8px; height: 8px; background: #00FFB2; border-radius: 50%; box-shadow: 0 0 10px #00FFB2; }
 
         .sidebar-footer {
             margin-top: auto; font-size: 11px; color: #444; line-height: 1.6;
         }
 
-        /* 채팅 영역 */
-        .content { display: flex; flex-direction: column; background: #fff; position: relative; }
-        
+        /* 메인 컨텐츠 영역 */
+        .content { display: flex; flex-direction: column; background: #fff; }
+
         .header {
             padding: 24px 40px; border-bottom: 1px solid var(--border-color);
             display: flex; justify-content: space-between; align-items: center;
         }
 
-        .header h3 { margin: 0; font-size: 18px; font-weight: 800; }
+        .header .title-area h3 { margin: 0; font-size: 18px; font-weight: 800; }
+        .header .title-area p { margin: 4px 0 0; font-size: 12px; color: #999; }
 
-        /* 구글 위젯이 채팅방 전체를 채우도록 설정 */
-        #widget-container {
+        /* 검색 인터페이스 영역 */
+        #search-portal {
             flex: 1;
-            height: 100%;
-            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 40px;
+            background: radial-gradient(circle at top right, #f0f4ff, #ffffff);
         }
 
+        .search-container {
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+            margin-bottom: 100px;
+        }
+
+        .search-container h1 { font-size: 32px; font-weight: 800; margin-bottom: 12px; letter-spacing: -1px; }
+        .search-container p { color: #666; margin-bottom: 40px; }
+
+        /* 고급 검색바 스타일 */
+        #searchWidgetTrigger {
+            width: 100%;
+            padding: 20px 32px;
+            font-size: 18px;
+            font-family: 'Pretendard', sans-serif;
+            border: 2px solid var(--hbf-blue);
+            border-radius: 40px;
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.15);
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+        #searchWidgetTrigger:hover {
+            box-shadow: 0 15px 40px rgba(0, 102, 255, 0.25);
+            transform: translateY(-3px);
+        }
+        #searchWidgetTrigger::placeholder { color: #ABB2BF; }
+
+        /* 위젯 결과창 위치 조정 */
         gen-search-widget {
-            width: 100% !important;
-            height: 100% !important;
-            max-width: 100% !important;
+            display: block;
+            width: 100%;
         }
     </style>
 </head>
@@ -115,6 +156,7 @@
     <div id="lock-screen">
         <div class="login-box">
             <h2>HBF KNOWLEDGE LAB</h2>
+            <p>보험 지식 통합 분석 플랫폼</p>
             <input type="password" id="pw" placeholder="접속 인증키를 입력하세요" onkeypress="if(event.keyCode==13) unlock()">
             <button onclick="unlock()">시스템 인증</button>
         </div>
@@ -124,15 +166,19 @@
         <aside class="sidebar">
             <div class="logo">HABIT FACTORY<br>INTELLIGENCE</div>
             
+            <div class="nav-label">Search Engine</div>
             <div class="status-card">
-                <div class="indicator">Conversation Active</div>
+                <div class="indicator">Ready to Search</div>
                 <div style="font-size: 12px; color: #888; line-height: 1.5;">
-                    대화 맥락을 기억하는<br>멀티턴 대화 모드입니다.
+                    업로드된 전문 문서를 기반으로<br>최적의 정보를 찾아냅니다.
                 </div>
             </div>
 
+            <div class="nav-label">Capabilities</div>
             <div style="font-size: 13px; color: #AAA; line-height: 1.7;">
-                설정된 AI 페르소나에 따라<br>전문적인 답변을 제공합니다.
+                • 보험 상품 약관 분석<br>
+                • 시장 트렌드 데이터 검색<br>
+                • 내부 문서 통합 가시화
             </div>
 
             <div class="sidebar-footer">
@@ -142,16 +188,25 @@
 
         <main class="content">
             <header class="header">
-                <h3>Insurance AI Strategy Assistant</h3>
-                <div style="font-size: 12px; color: var(--hbf-blue); font-weight: 600;">Gemini 2.5 Flash Connected</div>
+                <div class="title-area">
+                    <h3>Intelligent Insight Search</h3>
+                    <p>검색어를 입력하여 관련 문서를 즉시 확인하세요.</p>
+                </div>
             </header>
             
-            <div id="widget-container">
-                <script src="https://cloud.google.com/ai/gen-app-builder/client?hl=ko"></script>
+            <div id="search-portal">
+                <div class="search-container">
+                    <h1>무엇을 도와드릴까요?</h1>
+                    <p>보험 전문 지식과 내부 데이터를 기반으로 답변을 준비합니다.</p>
+                    
+                    <input type="text" id="searchWidgetTrigger" placeholder="검색어 또는 궁금한 내용을 입력하세요..." />
+                </div>
 
+                <script src="https://cloud.google.com/ai/gen-app-builder/client?hl=ko"></script>
                 <gen-search-widget
                   configId="26be6009-349a-4ee4-a714-1b09f2370434"
-                  displayMode="INLINE"> </gen-search-widget>
+                  triggerId="searchWidgetTrigger">
+                </gen-search-widget>
             </div>
         </main>
     </div>
@@ -159,7 +214,6 @@
     <script>
         function unlock() {
             const val = document.getElementById('pw').value;
-            // 정호님의 비밀번호
             if(val === "hbf2026") {
                 document.getElementById('lock-screen').style.display = 'none';
                 document.getElementById('main-ui').style.display = 'grid';
